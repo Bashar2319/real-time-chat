@@ -25,6 +25,7 @@ export const getMessagesByUserId = async (req, res) => {
         { senderId: myId, receiverId: userToChatId },
         { senderId: userToChatId, receiverId: myId },
       ],
+      meetingId: { $exists: false },
     });
 
     res.status(200).json(messages);
@@ -36,7 +37,7 @@ export const getMessagesByUserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text, image, meetingId } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
@@ -63,6 +64,7 @@ export const sendMessage = async (req, res) => {
       receiverId,
       text,
       image: imageUrl,
+      ...(meetingId && { meetingId }),
     });
 
     await newMessage.save();
@@ -103,6 +105,17 @@ export const getChatPartners = async (req, res) => {
     res.status(200).json(chatPartners);
   } catch (error) {
     console.error("Error in getChatPartners: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getMeetingMessages = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const messages = await Message.find({ meetingId });
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Error in getMeetingMessages controller:", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
