@@ -63,3 +63,25 @@ cd frontend
 npm install
 npm run dev
 ```
+
+---
+
+## 🐳 Run with Docker
+
+To containerize and run the application using Docker, use the included `Dockerfile`. This will build an optimized image containing both the frontend and backend.
+
+### 1. Build the Docker Image
+
+```bash
+docker build -t chatify-app .
+```
+
+### 2. Run the Container
+
+Create a `.env` file at the root of the project with the variables required for the backend (see above). Then run:
+
+```bash
+docker run -p 3000:3000 --env-file .env chatify-app
+```
+
+The app will start and serve both the API and frontend React application on `http://localhost:3000`.
